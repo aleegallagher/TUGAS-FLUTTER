@@ -31,6 +31,10 @@ class MyApp extends StatelessWidget {
 class MyAppState extends ChangeNotifier {
   //state MyAppState diidi dgn 2 kata random y digabung. kata kata random tersebut disimpan di variable WordPair
   var current = WordPair.random();
+    void getNext() {
+    current = WordPair.random();
+    notifyListeners();
+  }
 }
 //membuat layout pada halaman HpmePage
 class MyHomePage extends StatelessWidget {
@@ -46,7 +50,7 @@ class MyHomePage extends StatelessWidget {
           //lalu diubah menjadi huruf kecil semua, dan ditampilkan sebagai teks
           ElevatedButton( //membuat button timbul di dalam body
             onPressed: () { //fungsi y dieksekusi ketika button di tekan
-              print('button pressed!');
+              appState.getNext();  // ← This instead of print().
             },
             child: Text('Next'), //berikan teks 'Next' pada button (sebagai child)
           ),
