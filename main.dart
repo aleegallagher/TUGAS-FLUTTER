@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
         title: 'Namer App', //diberi judul Namer App
         theme: ThemeData( //data tema aplikasi diberi warna deepOrange
           useMaterial3: true, //versi materialUI dipakai versi 3
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
+          colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 111, 250, 255)),
         ),
         home: MyHomePage(), //nama halaman "MyHomePage" y menggunakan state "MyAppState"
       ),
@@ -41,20 +41,54 @@ class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>(); //widget menggunakan state MyAppState
+    var pair = appState.current; //variable pair menyimpan kata y sedang tampil/aktif
 
     return Scaffold( //base (canvas) dari layout
-      body: Column( //di atas swcaffold ada body body nya diberi kolom
-        children: [ //di dalam kolom diberi teks
-          Text('A random idea:'),
-          Text(appState.current.asLowerCase), //mengambil random teks dari Appstate pada variable wordpair current,
-          //lalu diubah menjadi huruf kecil semua, dan ditampilkan sebagai teks
-          ElevatedButton( //membuat button timbul di dalam body
-            onPressed: () { //fungsi y dieksekusi ketika button di tekan
-              appState.getNext();  // ← This instead of print().
-            },
-            child: Text('Next'), //berikan teks 'Next' pada button (sebagai child)
-          ),
-        ],
+      body: Center(
+        child: Column( //di atas swcaffold ada body body nya diberi kolom
+        mainAxisAlignment: MainAxisAlignment.center,
+          children: [ //di dalam kolom diberi teks
+            Text('A random idea:'),
+            BigCard(pair: pair), //mengambil nilai dari variabel pair,
+            //lalu diubah menjadi huruf kecil semua, dan ditampilkan sebagai BigCard
+            SizedBox(height: 10)
+            ElevatedButton( //membuat button timbul di dalam body
+              onPressed: () { //fungsi y dieksekusi ketika button di tekan
+                appState.getNext();  // ← This instead of print().
+              },
+              child: Text('Next'), //berikan teks 'Next' pada button (sebagai child)
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class BigCard extends StatelessWidget { //widget BigCard
+  const BigCard({
+    super.key,
+    required this.pair,
+  });
+
+  final WordPair pair;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context); 
+    final style = theme.textTheme.displayMedium!.copyWith(
+      color: theme.colorScheme.onPrimary,
+    );
+
+    return Card(
+      color: theme.colorScheme.primary,
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Text(
+          pair.asLowerCase,
+          style: style,
+          semanticsLabel: "${pair.first} ${pair.second}",
+        )
       ),
     );
   }
