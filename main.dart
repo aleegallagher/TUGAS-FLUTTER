@@ -30,14 +30,7 @@ class MyApp extends StatelessWidget {
 //mendefinisikan MyAppState
 class MyAppState extends ChangeNotifier {
   //state MyAppState diidi dgn 2 kata random y digabung. kata kata random tersebut disimpan di variable WordPair
-var current = WordPair.random();
-var favorites = <WordPair>[];
-var selectedIndex = 0;
-var selectedIndexInAnotherWidget = 0;
-var indexInYet AnotherWidget = 42;
-var optionASelected = false;
-var optionBSelected = false;
-var loadingFromNetwork = false;
+  
   var current = WordPair.random();
     void getNext() {
     current = WordPair.random();
