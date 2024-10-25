@@ -30,40 +30,115 @@ class MyApp extends StatelessWidget {
 //mendefinisikan MyAppState
 class MyAppState extends ChangeNotifier {
   //state MyAppState diidi dgn 2 kata random y digabung. kata kata random tersebut disimpan di variable WordPair
+var current = WordPair.random();
+var favorites = <WordPair>[];
+var selectedIndex = 0;
+var selectedIndexInAnotherWidget = 0;
+var indexInYet AnotherWidget = 42;
+var optionASelected = false;
+var optionBSelected = false;
+var loadingFromNetwork = false;
   var current = WordPair.random();
     void getNext() {
     current = WordPair.random();
     notifyListeners();
+  } 
+  var favorites = <WordPair>[];
+
+  void toggleFavorite() {
+    if (favorites.contains(current)) {
+      favorites.remove(current);
+    } else {
+      favorites.add(current);
+    }
+    notifyListeners();
   }
 }
 //membuat layout pada halaman HpmePage
+// ...
+
 class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    var appState = context.watch<MyAppState>(); //widget menggunakan state MyAppState
-    var pair = appState.current; //variable pair menyimpan kata y sedang tampil/aktif
-
-    return Scaffold( //base (canvas) dari layout
-      body: Center(
-        child: Column( //di atas swcaffold ada body body nya diberi kolom
-        mainAxisAlignment: MainAxisAlignment.center,
-          children: [ //di dalam kolom diberi teks
-            Text('A random idea:'),
-            BigCard(pair: pair), //mengambil nilai dari variabel pair,
-            //lalu diubah menjadi huruf kecil semua, dan ditampilkan sebagai BigCard
-            SizedBox(height: 10)
-            ElevatedButton( //membuat button timbul di dalam body
-              onPressed: () { //fungsi y dieksekusi ketika button di tekan
-                appState.getNext();  // ← This instead of print().
+    return Scaffold(
+      body: Row(
+        children: [
+          SafeArea(
+            child: NavigationRail(
+              extended: false,
+              destinations: [
+                NavigationRailDestination(
+                  icon: Icon(Icons.home),
+                  label: Text('Home'),
+                ),
+                NavigationRailDestination(
+                  icon: Icon(Icons.favorite),
+                  label: Text('Favorites'),
+                ),
+              ],
+              selectedIndex: 0,
+              onDestinationSelected: (value) {
+                print('selected: $value');
               },
-              child: Text('Next'), //berikan teks 'Next' pada button (sebagai child)
             ),
-          ],
-        ),
+          ),
+          Expanded(
+            child: Container(
+              color: Theme.of(context).colorScheme.primaryContainer,
+              child: GeneratorPage(),
+            ),
+          ),
+        ],
       ),
     );
   }
 }
+
+class GeneratorPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    var appState = context.watch<MyAppState>();
+    var pair = appState.current;
+
+    IconData icon;
+    if (appState.favorites.contains(pair)) {
+      icon = Icons.favorite;
+    } else {
+      icon = Icons.favorite_border;
+    }
+
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          BigCard(pair: pair),
+          SizedBox(height: 10),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ElevatedButton.icon(
+                onPressed: () {
+                  appState.toggleFavorite();
+                },
+                icon: Icon(icon),
+                label: Text('Like'),
+              ),
+              SizedBox(width: 10),
+              ElevatedButton(
+                onPressed: () {
+                  appState.getNext();
+                },
+                child: Text('Next'),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ...
 
 class BigCard extends StatelessWidget { //widget BigCard
   const BigCard({
